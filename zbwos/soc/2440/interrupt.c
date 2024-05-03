@@ -106,11 +106,8 @@ void handle_irq_c(int lr)
     static int h = 0;
     h++;
     /* 调用对应的处理函数 */
-    pri("bit = ", bit);
-    pri(" lr = ", lr);
-    pri(" h = ", h);
-    puts("\r\n");
-    //irq_array[bit](lr);
+
+    irq_array[bit](lr);
     
     /* 清中断 : 从源头开始清 */
     SRCPND = (1<<bit);

@@ -219,7 +219,12 @@ int saveandupdate_curstack(int *r0) {
         //只处理定时器中断
         //printf("bit != 10  [%d]\r\n", gpCurTaskCtrl->stack);
         //printf("bit != 10  \r\n");
-        return gpCurTaskCtrl->stack;
+        
+        handle_irq_c(0);
+       // return gpCurTaskCtrl->stack;
+    } else {
+        touchscreen_timer_irq();
+        //touchscreen_init();
     }
     
    // printf("IRQ_STACK_START lr[%d] r12[%d] r11[%d] r10[%d] r9[%d]\r\n", *(IRQ_STACK_START - 1), *(IRQ_STACK_START - 2),

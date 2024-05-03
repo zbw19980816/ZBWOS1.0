@@ -168,15 +168,74 @@ void jpeg(TASK_CTRL *task_ctrl, void *param) {
     }
 }
 #endif
+
+/* 初始化LCD */
+void user_lcd_init() {
+    unsigned int fb_base;
+    int xres, yres, bpp;
+
+    Enter_Critical();
+
+    /* 初始化LCD */
+    lcd_init();
+    puts("lcd_enable  \r\n");
+
+    /* 使能LCD */
+    lcd_enable();
+    puts("get_lcd_params  \r\n");
+
+    /* 获得LCD的参数 */
+    get_lcd_params(&fb_base, &xres, &yres, &bpp);
+    fb_get_lcd_params();
+    font_init();
+
+    /* 往framebuffer中写数据(全黑) */
+    memset(fb_base, 0, xres * yres * bpp / 8);
+    
+    Exit_Critical();
+
+    return;
+}
+
+/* 触屏线程 */
+void touch(TASK_CTRL *task_ctrl, void *param) {
+    int x, y, pressure;
+    
+    /* 初始化LCD */
+    user_lcd_init();
+
+    //初始化touchscreen
+    touchscreen_init();
+
+    //初始化tslib
+    ts_init();
+
+    //获取触屏事件
+    while (1) {
+        msleep(10);
+        if (ts_read(&x, &y, &pressure) == 0) {
+            printf("zbw x = %d, y = %d\n\r", x, y);
+
+            if (pressure) {
+                Enter_Critical();
+                fb_put_pixel_2(x, y, 0xff00, 4);
+                Exit_Critical();
+            }
+        }
+    }
+
+    return;
+}
+
 int main() {
 
     nand_init();
     filesystem_init();
     core_init();
     
-    creat_task(jpeg, (void*)'d', 0, STACK_SIZE);
+   // creat_task(jpeg, (void*)'d', 0, STACK_SIZE);
    // creat_task(GUI, (void*)'g', 0, STACK_SIZE);
-    
+    creat_task(touch, (void*)'d', 0, STACK_SIZE);
     start_task();
 
     return 0;

@@ -56,6 +56,21 @@ void fb_put_pixel(int x, int y, unsigned int color)
     }
 }
 
+/* 绘制实心矩形 */
+void fb_put_pixel_2(    int x, //中心点x
+                        int y, //中心点y
+                        unsigned int color, //色彩
+                        int z  //中心点到边缘距离
+) {
+    int i, j;
+
+    for (i = x; i < x + z; ++i)
+        for (j = y; j < y + z; ++j)
+    fb_put_pixel(i, j, 0xff00);
+
+    return;
+}
+
 #include "stl.h"
 static unsigned int fb_base_dou = NULL;
 

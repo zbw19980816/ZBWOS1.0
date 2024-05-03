@@ -232,7 +232,9 @@ StartTask_asm:
 
 /* 重启设备 */
 _reboot:
+    .word 0xdeadc0de  /* 未定义指令 */
+	swi 0x123  /* 执行此命令, 触发SWI异常, 通过uboot重启 */
 	/* 1、开启看门狗 */
-	ldr r0, =0x53000000
+	/*ldr r0, =0x53000000
 	ldr r1, =0x8011
-	str r1, [r0]
+	str r1, [r0]*/

@@ -159,3 +159,9 @@
      }    
  }    
 
+void fb_disp_cross(int x, int y, unsigned int color)
+{
+	draw_line(x-10, y, x+10, y, color);
+	draw_line(x, y-10, x, y+10, color);
+}
+

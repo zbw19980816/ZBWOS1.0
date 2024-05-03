@@ -51,4 +51,9 @@ int _atoi(char *s) {
     return ret;
 }
 
+/* 两数交换 */
+void swap_xy(int *px, int *py) {
+    *px ^= *py ^= *px ^= *py;
+    return;
+}
 

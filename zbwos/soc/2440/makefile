@@ -13,10 +13,14 @@ all: \
 	./lcd/lcd_controller.o \
 	./lcd/lcd_test.o \
 	./lcd/s3c2440_lcd_controller.o \
-	./lcd/font_8x16.o
-	arm-linux-ar rcs lib2440drv.a ./*.o ./lcd/*.o
+	./lcd/font_8x16.o \
+	./touch/touchscreen.o \
+	./touch/tslib.o
+	arm-linux-ar rcs lib2440drv.a ./*.o ./lcd/*.o ./touch/*.o
 clean:
 	rm *.bin *.elf *.dis *.o *.a -rf
+	rm ./lcd/*.o -rf
+	rm ./touch/*.o -rf
 	
 %.o : %.c
 	arm-linux-gcc -c -o $@ $< -I ../../include/soc -I ../../zbwos_core -I ../../file_system -I ../../user/jpeg
