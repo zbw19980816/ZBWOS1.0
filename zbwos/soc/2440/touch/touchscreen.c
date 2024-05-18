@@ -110,8 +110,9 @@ static int get_status_of_ts_timer(void) {
 
 /* 获取触屏原始数据 */
 void ts_read_raw(int *px, int *py, int *ppressure) {
-    while (g_ts_data_valid == 0){
-        msleep(100);
+    if (g_ts_data_valid == 0){
+        *ppressure = 0;   //未按下
+        return;
     }
     
     *px = g_ts_x;

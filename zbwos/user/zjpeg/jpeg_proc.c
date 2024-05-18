@@ -2,6 +2,7 @@
 #include "heap.h"
 #include "stl.h"
 #include "filesystem.h"
+#include "jpeg_proc.h"
 
 typedef struct {
     int seek;       //偏移
@@ -56,7 +57,7 @@ uint16_t out_func (JDEC *jd, void *bitmap, JRECT *rect)
 /* jpeg解码（数据流）
 rgb_buf由外部释放
 返回rgb_buf长度 */
-int jpeg_decode_from_buf(char *jpeg_buf, int jpeg_buf_size, char **rgb_buf) {
+int jpeg_decode_from_buf(char *jpeg_buf, int jpeg_buf_size, BITMAP_S *bmp) {
     int ret = 0;
     JDEC jdec;          //解码对象
     char *work;         //算法内存
@@ -98,14 +99,18 @@ int jpeg_decode_from_buf(char *jpeg_buf, int jpeg_buf_size, char **rgb_buf) {
     }
     
     Delete(work);
-    *rgb_buf = jpeg_proc.rgbbuf;
+    
+    bmp->data = jpeg_proc.rgbbuf;
+    bmp->head.biWidth = jdec.width;
+    bmp->head.biHeight = jdec.height;
+    
     return 3 * jdec.width * jdec.height;
 }
 
 /* jpeg解码（文件流）
 rgb_buf由外部释放
 返回rgb_buf长度 */
-int jpeg_decode_from_file(char *jpeg_name, char **rgb_buf) {
+int jpeg_decode_from_file(char *jpeg_name, BITMAP_S *head) {
     char *jpeg_buf = NULL;
     int ret = 0;
     SYS_TREE *p = filesystem_open_file(jpeg_name);
@@ -128,7 +133,7 @@ int jpeg_decode_from_file(char *jpeg_name, char **rgb_buf) {
         return -1;
     }
 
-    ret = jpeg_decode_from_buf(jpeg_buf, p->size, rgb_buf);
+    ret = jpeg_decode_from_buf(jpeg_buf, p->size, head);
     if (ret <= 0) {
         printf("jpeg_decode_from_buf fail, ret[%d]\r\n", ret);
     }

@@ -634,4 +634,66 @@ void filesystem_print_tree() {
     return;
 }
 
+/* 查看文件二进制数据 */
+int filesystem_cat_binary(char *name) {
+    int ret, i;
+    char *buf = NULL;
+    SYS_TREE * p = NULL;
+
+    if (!name){
+        printf("name NULL\r\n");
+        return -1;
+    }
+
+    p = filesystem_open_file(name);
+    if (!p){
+        printf("filesystem_open_file[%s] fail\r\n", name);
+        return -1;
+    }
+
+    buf = New(p->size);
+    if (!buf) {
+        printf("new buf fail, size[%d]\r\n", p->size);
+        return -1;
+    }
+
+    ret = filesystem_read_file(p, buf, p->size);
+    if (ret <= 0) {
+        printf("filesystem_read_file fail, ret[%d]\r\n", ret);
+        Delete(buf);
+        return -1;
+    }
+
+    //stdout
+    for (i = 0; i < p->size; ++i) {
+        printf("0x%x ", buf[i]);
+        if (!((i + 1) % 16))
+            printf("\r\n");
+    }
+    
+    Delete(buf);
+
+    return 0;
+}
+
+/* 删除文件 */
+int filesystem_remove_file(char *filename) {
+    SYS_TREE* sys_treenode = NULL;
+    
+    if (!filename){
+        printf("filename NULL\r\n");
+        return -1;
+    }
+    
+    sys_treenode = filesystem_open_file(filename);
+    if (!sys_treenode) {
+        printf("file[%s] not exist\r\n", filename);
+        return -1;
+    }
+    
+    memset(sys_treenode, 0, sizeof(*sys_treenode));
+
+    return 0;
+}
+
 

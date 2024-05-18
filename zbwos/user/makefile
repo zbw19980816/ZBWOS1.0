@@ -1,6 +1,11 @@
 all: \
 	./main.o
-	arm-linux-ar rcs libuser.a ./*.o  ./zjpeg/*.o ./zjpeg/tjpgd/*.o 
+	arm-linux-ar rcs libuser.a ./*.o  \
+	./zjpeg/*.o \
+	./zjpeg/tjpgd/*.o \
+	./app/touch/*.o \
+	./app/win/*.o \
+	./app/win/zui/*.o
 clean:
 	rm *.o *.a -rf
 	

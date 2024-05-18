@@ -7,7 +7,8 @@ all: \
 	./stl.o \
 	./shell.o \
 	./corectrl.o \
-	./heap.o
+	./heap.o \
+	./queue.o
 	arm-linux-ar rcs libzbwos.a ./*.o
 clean:
 	rm *.o *.a -rf

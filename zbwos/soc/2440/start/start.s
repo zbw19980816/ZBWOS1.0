@@ -145,7 +145,7 @@ reset:
 	msr cpsr, r0
 	
 	ldr sp, =0x33f80000  /* uboot start addr */
-	ldr pc, =main
+	ldr pc, =ZBWOS_Main
     /*ldr pc, =_Z4mainv*/
 /* 1、关闭看门狗 */
 	ldr r0, =0x53000000

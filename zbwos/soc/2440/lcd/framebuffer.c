@@ -110,7 +110,7 @@ void fb_put_pixel_dou(int x, int y, unsigned int color)
 void dou_refresh() {
     if (NULL == fb_base_dou)
             fb_base_dou = New(480*272*2);
-    printf("dou_refresh fb_base_dou[%d]",fb_base_dou);
+    //printf("dou_refresh fb_base_dou[%d]",fb_base_dou);
 
     unsigned int *p = fb_base;
     memcpy(p, fb_base_dou, (480*272*2));

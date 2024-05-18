@@ -45,6 +45,7 @@ void get_calibrate_point_data(int lcd_x, int lcd_y, int *px, int *py) {
     /* 等待点击 */
     do {
         ts_read_raw(&x, &y, &pressure); 
+        msleep(100);
     } while (pressure == 0);
 
     do {
@@ -202,7 +203,11 @@ int ts_read(int *lcd_x, int *lcd_y, int *lcd_pressure) {
     int ts_x, ts_y, ts_pressure;
     int tmp_x, tmp_y;
     ts_read_raw(&ts_x, &ts_y, &ts_pressure);
-
+    if (!ts_pressure) { //未按下无需校验准确性
+        *lcd_pressure = ts_pressure;
+        return 0;
+    }
+    
     if (g_ts_xy_swap) {
         swap_xy(&ts_x, &ts_y);
     }

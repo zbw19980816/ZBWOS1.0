@@ -213,32 +213,24 @@ void stack_debug(int *stack)
 
 /* 更新上个task栈顶 & 更新下个task */
 int saveandupdate_curstack(int *r0) {
-	int bit = INTOFFSET;
-    //printf("bit[%d] SysTickTime[%d] \r\n", bit, SysTickTime);
+    int bit = INTOFFSET;
+
     if (bit != 10) {
-        //只处理定时器中断
-        //printf("bit != 10  [%d]\r\n", gpCurTaskCtrl->stack);
-        //printf("bit != 10  \r\n");
-        
+        //非定时器中断
         handle_irq_c(0);
-       // return gpCurTaskCtrl->stack;
+        if (NULL != gpCurTaskCtrl)
+            return r0;  //不触发调度
     } else {
         touchscreen_timer_irq();
-        //touchscreen_init();
     }
-    
-   // printf("IRQ_STACK_START lr[%d] r12[%d] r11[%d] r10[%d] r9[%d]\r\n", *(IRQ_STACK_START - 1), *(IRQ_STACK_START - 2),
-   // *(IRQ_STACK_START - 3),*(IRQ_STACK_START - 4),*(IRQ_STACK_START - 5));  //lr
 
-    //printf("saveandupdate_curstack bit = %d \r\n", bit);
     /* 时基列表更新 */
     TickListUpdate();
 
     if (NULL != gpCurTaskCtrl) {
         /* 更新当前任务栈顶位置 */
         gpCurTaskCtrl->stack = r0;
-      //  printf("1111>>>gpCurTaskCtrl->stack = %d \r\n", gpCurTaskCtrl->stack);
-     //   stack_debug(gpCurTaskCtrl->stack);
+
         /* 任务轮询 */
         if (gpCurTaskCtrl->TaskState == TASK_RDY)
             RdyListHeadToTail(&gRdyList[gpCurTaskCtrl->prio]);
@@ -246,15 +238,11 @@ int saveandupdate_curstack(int *r0) {
     
     /* 从就绪列表中获取下一个最高优先级的任务 */
     gpCurTaskCtrl = gRdyList[GetHighPrio()].HeadPoint;
-    
     sleepwait = 0;
-    //TCNTB0 = 62500 * SYSTIMECYL / 1000;
 
     /* 清中断 */
     SRCPND = (1 << INTOFFSET);
     INTPND = (1 << INTOFFSET);
-  //  printf("222>>>gpCurTaskCtrl->stack = %d \r\n", gpCurTaskCtrl->stack);
-    //stack_debug(gpCurTaskCtrl->stack);
 
     return gpCurTaskCtrl->stack;
 }

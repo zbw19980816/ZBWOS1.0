@@ -29,9 +29,10 @@ void getheapmem(char *cmd) {
     return;
 }
 
-/* 重启（待实现） */
+/* 重启 */
 void reboot(char *cmd) {
     printf("zbwos reboot now ...\r\n");
+    //filesystem_sync();
     _reboot();
     return;
 }
@@ -140,6 +141,34 @@ void sync(char *cmd) {
     return;
 }
 
+/* 查看文件二进制 */
+void binary(char *cmd) {
+    char *find = cmd;
+    char *name_base;
+
+    find = strstr(cmd, "binary");
+    name_base = find + strlen("binary");
+    while (*name_base == ' ') name_base++;
+
+    filesystem_cat_binary(name_base);
+
+    return;
+}
+
+/* 删除文件 */
+void rm(char *cmd) {
+    char *find = cmd;
+    char *name_base;
+
+    find = strstr(cmd, "rm");
+    name_base = find + strlen("rm");
+    while (*name_base == ' ') name_base++;
+
+    filesystem_remove_file(name_base);
+
+    return;
+}
+
 /* shell指令表 */
 SHELL_TAB cmdtable[] = {
     /*  指令            回调   */
@@ -151,8 +180,10 @@ SHELL_TAB cmdtable[] = {
     {"flashclear",  flashclear},    /* 清空文件树 */
     {"tree",        tree},          /* 显示文件树 */
     {"mkfile",      mkfile},        /* 创建文件 */
+    {"rm",          rm},            /* 删除文件 */
     //{"mkdir",       mkdir},         /* 创建目录 */
     {"sync",        sync},          /* 文件树刷nand flash */
+    {"binary",      binary},        /* 查看文件二进制 */
     {"\n",          enterproc},     /* 回车 */
 };
 
